@@ -7,7 +7,6 @@ export default function CalendarBodyDayCalendar() {
     <Calendar
       selected={date}
       onSelect={(date: Date | undefined) => date && setDate(date)}
-      mode="single"
     />
   )
 }

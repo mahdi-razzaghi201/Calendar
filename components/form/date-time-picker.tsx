@@ -15,14 +15,14 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 interface DateTimePickerProps {
   field: {
-    value: string
+    value: string | undefined
     onChange: (value: string) => void
   }
 }
 
 export function DateTimePicker({ field }: DateTimePickerProps) {
-  const [date, setDate] = React.useState<Date>(
-    field.value ? new Date(field.value) : new Date()
+  const [date, setDate] = React.useState<Date | undefined>(
+    field.value ? new Date(field.value) : undefined
   )
   const [isOpen, setIsOpen] = React.useState(false)
 
@@ -30,7 +30,7 @@ export function DateTimePicker({ field }: DateTimePickerProps) {
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
-      const newDate = new Date(date)
+      const newDate = new Date(date ?? selectedDate)
       newDate.setFullYear(selectedDate.getFullYear())
       newDate.setMonth(selectedDate.getMonth())
       newDate.setDate(selectedDate.getDate())
@@ -43,6 +43,8 @@ export function DateTimePicker({ field }: DateTimePickerProps) {
     type: 'hour' | 'minute' | 'ampm',
     value: string
   ) => {
+    if (!date) return // اگر هنوز تاریخ انتخاب نشده کاری نکن
+
     const newDate = new Date(date)
     if (type === 'hour') {
       newDate.setHours(
@@ -77,18 +79,13 @@ export function DateTimePicker({ field }: DateTimePickerProps) {
           {date ? (
             format(date, 'MM/dd/yyyy hh:mm aa')
           ) : (
-            <span>MM/DD/YYYY hh:mm aa</span>
+            <span>تاریخ و ساعت را انتخاب کنید</span>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
         <div className="sm:flex">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={handleDateSelect}
-            initialFocus
-          />
+          <Calendar selected={date} onSelect={handleDateSelect} />
           <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
             <ScrollArea className="w-64 sm:w-auto">
               <div className="flex sm:flex-col p-2">

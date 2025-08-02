@@ -1,5 +1,5 @@
 import { useCalendarContext } from '../../calendar-context'
-import { isSameDay } from 'date-fns'
+import { isSameDay } from 'date-fns-jalali' 
 import { hours } from './calendar-body-margin-day-margin'
 import CalendarBodyHeader from '../calendar-body-header'
 import CalendarEvent from '../../calendar-event'

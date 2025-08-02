@@ -1,7 +1,12 @@
-import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 
 export const hours = Array.from({ length: 24 }, (_, i) => i)
+
+function formatHourFa(hour: number) {
+  const persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹']
+  const hourString = hour.toString().padStart(2, '0')
+  return hourString.replace(/\d/g, d => persianDigits[+d]) + ':۰۰'
+}
 
 export default function CalendarBodyMarginDayMargin({
   className,
@@ -21,7 +26,7 @@ export default function CalendarBodyMarginDayMargin({
           <div key={hour} className="relative h-32 first:mt-0">
             {hour !== 0 && (
               <span className="absolute text-xs text-muted-foreground -top-2.5 left-2">
-                {format(new Date().setHours(hour, 0, 0, 0), 'h a')}
+                {formatHourFa(hour)}
               </span>
             )}
           </div>

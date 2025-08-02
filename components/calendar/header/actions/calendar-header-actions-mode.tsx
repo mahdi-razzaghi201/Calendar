@@ -1,14 +1,19 @@
-'use client'
+"use client";
 
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Mode, calendarModes } from '../../calendar-types'
-import { useCalendarContext } from '../../calendar-context'
-import { calendarModeIconMap } from '../../calendar-mode-icon-map'
-import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
-import { cn } from '@/lib/utils'
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Mode, calendarModes } from "../../calendar-types";
+import { useCalendarContext } from "../../calendar-context";
+import { calendarModeIconMap } from "../../calendar-mode-icon-map";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { cn } from "@/lib/utils";
+const calendarModeLabelMap: Record<Mode, string> = {
+  day: "روز",
+  week: "هفته",
+  month: "ماه",
+};
 
 export default function CalendarHeaderActionsMode() {
-  const { mode, setMode } = useCalendarContext()
+  const { mode, setMode } = useCalendarContext();
 
   return (
     <LayoutGroup>
@@ -18,11 +23,11 @@ export default function CalendarHeaderActionsMode() {
         variant="outline"
         value={mode}
         onValueChange={(value) => {
-          if (value) setMode(value as Mode)
+          if (value) setMode(value as Mode);
         }}
       >
         {calendarModes.map((modeValue) => {
-          const isSelected = mode === modeValue
+          const isSelected = mode === modeValue;
           return (
             <motion.div
               key={modeValue}
@@ -31,7 +36,7 @@ export default function CalendarHeaderActionsMode() {
               animate={{ flex: isSelected ? 1.6 : 1 }}
               transition={{
                 flex: {
-                  type: 'spring',
+                  type: "spring",
                   stiffness: 400,
                   damping: 30,
                 },
@@ -40,8 +45,8 @@ export default function CalendarHeaderActionsMode() {
               <ToggleGroupItem
                 value={modeValue}
                 className={cn(
-                  'w-full rounded-none shadow-none focus-visible:z-10 text-base flex items-center justify-center gap-2 relative border-none',
-                  isSelected && 'z-10'
+                  "w-full rounded-none shadow-none focus-visible:z-10 text-base flex items-center justify-center gap-2 relative border-none",
+                  isSelected && "z-10"
                 )}
               >
                 <motion.div
@@ -53,12 +58,12 @@ export default function CalendarHeaderActionsMode() {
                   }}
                   transition={{
                     scale: {
-                      type: 'spring',
+                      type: "spring",
                       stiffness: 400,
                       damping: 30,
                     },
                     layout: {
-                      type: 'spring',
+                      type: "spring",
                       stiffness: 400,
                       damping: 30,
                     },
@@ -72,7 +77,7 @@ export default function CalendarHeaderActionsMode() {
                     }}
                     transition={{
                       scale: {
-                        type: 'spring',
+                        type: "spring",
                         stiffness: 400,
                         damping: 30,
                       },
@@ -96,7 +101,7 @@ export default function CalendarHeaderActionsMode() {
                           x: 0,
                           scale: 1,
                           transition: {
-                            type: 'spring',
+                            type: "spring",
                             stiffness: 400,
                             damping: 30,
                             opacity: { duration: 0.15 },
@@ -107,23 +112,23 @@ export default function CalendarHeaderActionsMode() {
                           x: -2,
                           scale: 0.95,
                           transition: {
-                            type: 'spring',
+                            type: "spring",
                             stiffness: 400,
                             damping: 30,
                             opacity: { duration: 0.1 },
                           },
                         }}
                       >
-                        {modeValue.charAt(0).toUpperCase() + modeValue.slice(1)}
+                        {calendarModeLabelMap[modeValue]}
                       </motion.p>
                     )}
                   </AnimatePresence>
                 </motion.div>
               </ToggleGroupItem>
             </motion.div>
-          )
+          );
         })}
       </ToggleGroup>
     </LayoutGroup>
-  )
+  );
 }

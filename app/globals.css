@@ -56,7 +56,7 @@ body {
 
     --radius: 0.75rem;
   }
-  .dark {
+  /* .dark {
     --background: 0 0% 7.06%;
     --foreground: 0 0% 89.8%;
 
@@ -101,7 +101,7 @@ body {
     --sidebar-ring: 0 0% 89.8%;
 
     --radius: 0.75rem;
-  }
+  } */
 }
 @layer base {
   * {

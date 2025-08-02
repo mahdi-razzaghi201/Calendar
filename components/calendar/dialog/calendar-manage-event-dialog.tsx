@@ -1,14 +1,14 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { useEffect } from 'react'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -16,13 +16,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { useCalendarContext } from '../calendar-context'
-import { format } from 'date-fns'
-import { DateTimePicker } from '@/components/form/date-time-picker'
-import { ColorPicker } from '@/components/form/color-picker'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useCalendarContext } from "../calendar-context";
+import { format } from "date-fns";
+import { DateTimePicker } from "@/components/form/date-time-picker";
+import { ColorPicker } from "@/components/form/color-picker";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,35 +33,35 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from "@/components/ui/alert-dialog";
 
 const formSchema = z
   .object({
-    title: z.string().min(1, 'Title is required'),
-    description: z.string().min(1, 'Title is required'), // NEW
+    title: z.string().min(1, "عنوان الزامی است"),
+    description: z.string().min(1, "توضیحات الزامی است"), // جدید
     start: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: 'Invalid start date',
+      message: "تاریخ شروع نامعتبر است",
     }),
     end: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: 'Invalid end date',
+      message: "تاریخ پایان نامعتبر است",
     }),
     color: z.string(),
   })
   .refine(
     (data) => {
       try {
-        const start = new Date(data.start)
-        const end = new Date(data.end)
-        return end >= start
+        const start = new Date(data.start);
+        const end = new Date(data.end);
+        return end >= start;
       } catch {
-        return false
+        return false;
       }
     },
     {
-      message: 'End time must be after start time',
-      path: ['end'],
+      message: "زمان پایان باید بعد از زمان شروع باشد",
+      path: ["end"],
     }
-  )
+  );
 
 export default function CalendarManageEventDialog() {
   const {
@@ -71,33 +71,33 @@ export default function CalendarManageEventDialog() {
     setSelectedEvent,
     events,
     setEvents,
-  } = useCalendarContext()
+  } = useCalendarContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      start: '',
-      end: '',
-      description: '', // NEW
-      color: 'blue',
+      title: "",
+      start: "",
+      end: "",
+      description: "", // جدید
+      color: "blue",
     },
-  })
+  });
 
   useEffect(() => {
     if (selectedEvent) {
       form.reset({
         title: selectedEvent.title,
-        description: selectedEvent.description, // NEW
+        description: selectedEvent.description, // جدید
         start: format(selectedEvent.start, "yyyy-MM-dd'T'HH:mm"),
         end: format(selectedEvent.end, "yyyy-MM-dd'T'HH:mm"),
         color: selectedEvent.color,
-      })
+      });
     }
-  }, [selectedEvent, form])
+  }, [selectedEvent, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!selectedEvent) return
+    if (!selectedEvent) return;
 
     const updatedEvent = {
       ...selectedEvent,
@@ -105,33 +105,34 @@ export default function CalendarManageEventDialog() {
       start: new Date(values.start),
       end: new Date(values.end),
       color: values.color,
-    }
+      description: values.description, // اضافه کردن توضیحات
+    };
 
     setEvents(
       events.map((event) =>
         event.id === selectedEvent.id ? updatedEvent : event
       )
-    )
-    handleClose()
+    );
+    handleClose();
   }
 
   function handleDelete() {
-    if (!selectedEvent) return
-    setEvents(events.filter((event) => event.id !== selectedEvent.id))
-    handleClose()
+    if (!selectedEvent) return;
+    setEvents(events.filter((event) => event.id !== selectedEvent.id));
+    handleClose();
   }
 
   function handleClose() {
-    setManageEventDialogOpen(false)
-    setSelectedEvent(null)
-    form.reset()
+    setManageEventDialogOpen(false);
+    setSelectedEvent(null);
+    form.reset();
   }
 
   return (
     <Dialog open={manageEventDialogOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Manage event</DialogTitle>
+          <DialogTitle>مدیریت رویداد</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -140,23 +141,23 @@ export default function CalendarManageEventDialog() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Title</FormLabel>
+                  <FormLabel className="font-bold">عنوان</FormLabel>
                   <FormControl>
-                    <Input placeholder="Event title" {...field} />
+                    <Input placeholder="عنوان رویداد" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* NEW */}
+            {/* جدید */}
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Description</FormLabel>
+                  <FormLabel className="font-bold">توضیحات</FormLabel>
                   <FormControl>
-                    <Input placeholder="Event Description" {...field} />
+                    <Input placeholder="توضیحات رویداد" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -168,7 +169,7 @@ export default function CalendarManageEventDialog() {
               name="start"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Start</FormLabel>
+                  <FormLabel className="font-bold">شروع</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
                   </FormControl>
@@ -177,13 +178,12 @@ export default function CalendarManageEventDialog() {
               )}
             />
 
-
             <FormField
               control={form.control}
               name="end"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">End</FormLabel>
+                  <FormLabel className="font-bold">پایان</FormLabel>
                   <FormControl>
                     <DateTimePicker field={field} />
                   </FormControl>
@@ -197,7 +197,7 @@ export default function CalendarManageEventDialog() {
               name="color"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-bold">Color</FormLabel>
+                  <FormLabel className="font-bold">رنگ</FormLabel>
                   <FormControl>
                     <ColorPicker field={field} />
                   </FormControl>
@@ -210,30 +210,30 @@ export default function CalendarManageEventDialog() {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" type="button">
-                    Delete
+                    حذف
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete event</AlertDialogTitle>
+                    <AlertDialogTitle>حذف رویداد</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete this event? This action
-                      cannot be undone.
+                      آیا مطمئن هستید که می‌خواهید این رویداد را حذف کنید؟ این
+                      عملیات قابل بازگشت نیست.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>لغو</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDelete}>
-                      Delete
+                      حذف
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button type="submit">Update event</Button>
+              <Button type="submit">به‌روزرسانی رویداد</Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

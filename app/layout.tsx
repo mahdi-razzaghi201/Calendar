@@ -29,7 +29,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="fa"
+      dir='rtl'
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} `}
     >

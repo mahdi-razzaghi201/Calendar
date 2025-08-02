@@ -1,47 +1,65 @@
 import { CalendarEvent } from "@/components/calendar/calendar-types";
-import { addDays, startOfMonth } from "date-fns";
+import { addDays } from "date-fns";
 import { colorOptions } from "@/components/calendar/calendar-tailwind-classes";
+// @ts-ignore
+import jalaali from "jalaali-js";
 
 const EVENT_TITLES = [
-  "Team Standup",
-  "Project Review",
-  "Client Meeting",
-  "Design Workshop",
-  "Code Review",
-  "Sprint Planning",
-  "Product Demo",
-  "Architecture Discussion",
-  "User Testing",
-  "Stakeholder Update",
-  "Tech Talk",
-  "Deployment Planning",
-  "Bug Triage",
-  "Feature Planning",
-  "Team Training",
+  "جلسه روزانه تیم",
+  "بازبینی پروژه",
+  "جلسه با مشتری",
+  "کارگاه طراحی",
+  "بازبینی کد",
+  "برنامه‌ریزی اسپرینت",
+  "نمایش محصول",
+  "بحث معماری",
+  "آزمون کاربری",
+  "به‌روزرسانی ذی‌نفعان",
+  "گفتگوی فنی",
+  "برنامه‌ریزی استقرار",
+  "مرتب‌سازی اشکالات",
+  "برنامه‌ریزی ویژگی‌ها",
+  "آموزش تیم",
 ];
 
-// Extract color values from colorOptions
 const EVENT_COLORS = colorOptions.map((color) => color.value);
 
 function getRandomTime(date: Date): Date {
-  const hours = Math.floor(Math.random() * 14) + 8; // 8 AM to 10 PM
-  const minutes = Math.floor(Math.random() * 4) * 15; // 0, 15, 30, 45
+  const hours = Math.floor(Math.random() * 14) + 8; 
+  const minutes = Math.floor(Math.random() * 4) * 15;
   return new Date(date.setHours(hours, minutes, 0, 0));
 }
 
 function generateEventDuration(): number {
-  const durations = [30, 60, 90, 120]; // in minutes
+  const durations = [30, 60, 90, 120];
   return durations[Math.floor(Math.random() * durations.length)];
+}
+
+function getStartOfPersianMonth(date: Date): Date {
+  const { jy, jm } = jalaali.toJalaali(date);
+  const startOfMonthJalaali = { jy, jm, jd: 1 }; 
+  const startOfMonthGregorian = jalaali.toGregorian(
+    startOfMonthJalaali.jy,
+    startOfMonthJalaali.jm,
+    startOfMonthJalaali.jd
+  );
+  return new Date(
+    startOfMonthGregorian.gy,
+    startOfMonthGregorian.gm - 1,
+    startOfMonthGregorian.gd,
+    0,
+    0,
+    0,
+    0
+  );
 }
 
 export function generateMockEvents(): CalendarEvent[] {
   const events: CalendarEvent[] = [];
-  const startDate = startOfMonth(new Date());
+  const startDate = getStartOfPersianMonth(new Date()); // اول ماه شمسی به میلادی
 
-  // Generate 120 events over 3 months
   for (let i = 0; i < 120; i++) {
-    // Random date between start and end
-    const daysToAdd = Math.floor(Math.random() * 90); // 90 days = ~3 months
+    const daysToAdd = Math.floor(Math.random() * 90);
     const eventDate = addDays(startDate, daysToAdd);
 
     const startTime = getRandomTime(eventDate);
@@ -52,12 +70,11 @@ export function generateMockEvents(): CalendarEvent[] {
       id: `event-${i + 1}`,
       title: EVENT_TITLES[Math.floor(Math.random() * EVENT_TITLES.length)],
       color: EVENT_COLORS[Math.floor(Math.random() * EVENT_COLORS.length)],
-      description: "testetetetet",
+      description: "توضیحات نمونه",
       start: startTime,
       end: endTime,
     });
   }
 
-  // Sort events by start date
   return events.sort((a, b) => a.start.getTime() - b.start.getTime());
 }
