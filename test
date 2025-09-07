@@ -1,0 +1,97 @@
+'use client';
+
+import React, { useState } from 'react';
+
+interface PhotoGalleryProps {
+  images: string[];
+  titles?: string[];
+}
+
+const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images, titles }) => {
+  const [active, setActive] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
+
+  const prev = () => setActive((a) => (a === 0 ? images.length - 1 : a - 1));
+  const next = () => setActive((a) => (a === images.length - 1 ? 0 : a + 1));
+
+  return (
+    <div className="rtl flex h-screen w-full flex-col items-center justify-center bg-gray-100 p-4">
+      {/* عکس بزرگ با دکمه‌ها */}
+      <div className="relative mb-6">
+        <button
+          onClick={prev}
+          className="absolute -left-8 top-1/2 z-10 -translate-y-1/2 transform rounded-full bg-white p-3 shadow hover:bg-gray-200"
+        >
+          ◀
+        </button>
+        <img
+          src={images[active]}
+          alt={`slide-${active}`}
+          onClick={() => setFullscreen(true)}
+          className="h-[400px] w-[600px] cursor-pointer rounded-xl object-cover shadow-xl transition-transform duration-300 hover:scale-105"
+        />
+        <button
+          onClick={next}
+          className="absolute -right-8 top-1/2 z-10 -translate-y-1/2 transform rounded-full bg-white p-3 shadow hover:bg-gray-200"
+        >
+          ▶
+        </button>
+      </div>
+
+      {/* Thumbnails */}
+      <div className="flex w-full justify-center gap-4 overflow-x-auto">
+        {images.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt={`thumb-${i}`}
+            onClick={() => setActive(i)}
+            className={`h-[70px] w-[100px] cursor-pointer rounded-md object-cover shadow-md transition-all duration-300 ${i === active ? 'ring-4 ring-blue-400' : 'opacity-70 hover:opacity-100'}`}
+          />
+        ))}
+      </div>
+
+      {/* توضیح فارسی */}
+      {titles && titles[active] && (
+        <div className="mt-4 w-[600px] text-right">
+          <h2 className="text-xl font-bold">{titles[active]}</h2>
+          <p className="text-gray-700">{titles[active]}</p>
+        </div>
+      )}
+
+      {/* Fullscreen */}
+      {fullscreen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90"
+          onClick={() => setFullscreen(false)}
+        >
+          <img
+            src={images[active]}
+            alt="fullscreen"
+            className="max-h-[90%] max-w-[90%] rounded-lg object-contain shadow-2xl"
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PhotoGallery;
+
+import PhotoGallery from '@/components/PhotoGallery';
+
+export default function Page() {
+  const images = [
+    'https://picsum.photos/id/1015/800/600',
+    'https://picsum.photos/id/1024/800/600',
+    'https://picsum.photos/id/1035/800/600',
+  ];
+
+  const titles = [
+    'تصویر اول',
+    'تصویر دوم',
+    'تصویر سوم',
+  ];
+
+  return <PhotoGallery images={images} titles={titles} />;
+}
